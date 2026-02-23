@@ -1,0 +1,156 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// ================= STRUCTS =================
+
+struct Student {
+    string id;
+    string name;
+};
+
+struct AttendanceSession {
+    string name;
+    vector<string> presentIDs;
+};
+
+// ================= GLOBAL VECTORS =================
+
+vector<Student> students;
+vector<AttendanceSession> sessions;
+
+// ================= FUNCTIONS =================
+
+// Add a student (for demo, you can load from Week 1)
+void registerStudent() {
+    Student s;
+    cout << "Enter Student ID: ";
+    getline(cin, s.id);
+    cout << "Enter Student Name: ";
+    getline(cin, s.name);
+    students.push_back(s);
+    cout << "Student Registered Successfully!\n";
+}
+
+// Create a new session
+void createSession() {
+    AttendanceSession s;
+    cout << "Enter Session Name: ";
+    getline(cin, s.name);
+    sessions.push_back(s);
+    cout << "Session Created Successfully!\n";
+}
+
+// View all sessions
+void viewSessions() {
+    if (sessions.empty()) {
+        cout << "No sessions available.\n";
+        return;
+    }
+    cout << "\n--- Lecture Sessions ---\n";
+    for (size_t i = 0; i < sessions.size(); i++) {
+        cout << i + 1 << ". " << sessions[i].name << endl;
+    }
+}
+
+// Check if student exists
+bool studentExists(string id) {
+    for (const auto& s : students) {
+        if (s.id == id) return true;
+    }
+    return false;
+}
+
+// Mark attendance
+void markAttendance() {
+    if (sessions.empty()) {
+        cout << "No sessions available.\n";
+        return;
+    }
+
+    viewSessions();
+    int choice;
+    cout << "Select session number: ";
+    cin >> choice;
+    cin.ignore();
+
+    if (choice < 1 || choice > sessions.size()) {
+        cout << "Invalid session choice.\n";
+        return;
+    }
+
+    string id;
+    cout << "Enter Student ID to mark present: ";
+    getline(cin, id);
+
+    if (!studentExists(id)) {
+        cout << "Student not found.\n";
+        return;
+    }
+
+    sessions[choice - 1].presentIDs.push_back(id);
+    cout << "Attendance Marked Successfully!\n";
+}
+
+// Generate attendance report
+void generateReport() {
+    if (sessions.empty()) {
+        cout << "No sessions available.\n";
+        return;
+    }
+
+    viewSessions();
+    int choice;
+    cout << "Select session number: ";
+    cin >> choice;
+    cin.ignore();
+
+    if (choice < 1 || choice > sessions.size()) {
+        cout << "Invalid session choice.\n";
+        return;
+    }
+
+    AttendanceSession& session = sessions[choice - 1];
+
+    cout << "\n--- Attendance Report ---\n";
+    cout << "Session: " << session.name << endl;
+    cout << "Total Present: " << session.presentIDs.size() << endl;
+
+    for (const auto& id : session.presentIDs) {
+        cout << "Student ID: " << id << endl;
+    }
+}
+
+// ================= MAIN MENU =================
+
+int main() {
+    int choice;
+
+    do {
+        cout << "\n--- Digital Attendance System (Week 3) ---\n";
+        cout << "1. Register Student\n";
+        cout << "2. Create Session\n";
+        cout << "3. View Sessions\n";
+        cout << "4. Mark Attendance\n";
+        cout << "5. Generate Report\n";
+        cout << "6. Exit\n";
+        cout << "Choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1: registerStudent(); break;
+            case 2: createSession(); break;
+            case 3: viewSessions(); break;
+            case 4: markAttendance(); break;
+            case 5: generateReport(); break;
+            case 6: cout << "Exiting Week 3...\n"; break;
+            default: cout << "Invalid choice. Try again.\n";
+        }
+
+    } while (choice != 6);
+
+    return 0;
+}
