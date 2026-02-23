@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// Attendance session struct
+struct AttendanceSession {
+    string name;
+};
+
+vector<AttendanceSession> sessions;
+
+// Create new session
+void createSession() {
+    AttendanceSession s;
+    cout << "Enter Session Name: ";
+    getline(cin, s.name);
+
+    sessions.push_back(s);
+    cout << "Session Created Successfully!\n";
+}
+
+// View all sessions
+void viewSessions() {
+    if (sessions.empty()) {
+        cout << "No sessions available.\n";
+        return;
+    }
+
+    cout << "\n--- Lecture Sessions ---\n";
+    for (size_t i = 0; i < sessions.size(); i++) {
+        cout << i + 1 << ". " << sessions[i].name << endl;
+    }
+}
+
+int main() {
+    int choice;
+
+    do {
+        cout << "\n--- Digital Attendance System (Week 2) ---\n";
+        cout << "1. Create Session\n";
+        cout << "2. View Sessions\n";
+        cout << "3. Exit\n";
+        cout << "Choice: ";
+        cin >> choice;
+        cin.ignore(); // clear input buffer
+
+        switch (choice) {
+            case 1:
+                createSession();
+                break;
+            case 2:
+                viewSessions();
+                break;
+            case 3:
+                cout << "Exiting Week 2 Menu...\n";
+                break;
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+
+    } while (choice != 3);
+
+    return 0;
+}
