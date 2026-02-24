@@ -14,6 +14,7 @@ vector<AttendanceSession> sessions;
 // Create new session
 void createSession() {
     AttendanceSession s;
+
     cout << "Enter Session Name: ";
     getline(cin, s.name);
 
@@ -43,8 +44,18 @@ int main() {
         cout << "2. View Sessions\n";
         cout << "3. Exit\n";
         cout << "Choice: ";
+
         cin >> choice;
-        cin.ignore(); // clear input buffer
+
+        // Input validation
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Invalid input. Please enter a number.\n";
+            continue;
+        }
+
+        cin.ignore(1000, '\n'); // clear buffer safely
 
         switch (choice) {
             case 1:
