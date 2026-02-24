@@ -28,10 +28,13 @@ void loadStudents() {
     ifstream file("students.txt");
     if (!file) return;
 
+    students.clear();  // prevent duplication
+
     Student s;
     while (getline(file, s.id) && getline(file, s.name)) {
         students.push_back(s);
     }
+
     file.close();
 }
 
@@ -46,10 +49,13 @@ void saveStudents() {
 
 void registerStudent() {
     Student s;
+
     cout << "Enter Student ID: ";
     getline(cin, s.id);
+
     cout << "Enter Student Name: ";
     getline(cin, s.name);
+
     students.push_back(s);
     cout << "Student Registered Successfully!\n";
 }
@@ -59,6 +65,7 @@ void viewStudents() {
         cout << "No students registered.\n";
         return;
     }
+
     cout << "\n--- Student List ---\n";
     for (size_t i = 0; i < students.size(); i++) {
         cout << i + 1 << ". ID: " << students[i].id
@@ -68,7 +75,8 @@ void viewStudents() {
 
 bool studentExists(string id) {
     for (const auto& s : students) {
-        if (s.id == id) return true;
+        if (s.id == id)
+            return true;
     }
     return false;
 }
@@ -79,39 +87,53 @@ void loadSessions() {
     ifstream file("sessions.txt");
     if (!file) return;
 
-    AttendanceSession s;
-    string line;
-    while (getline(file, s.name)) {
+    sessions.clear();  // prevent duplication
+
+    while (true) {
+        AttendanceSession s;
+
+        if (!getline(file, s.name))
+            break;
+
         int n;
-        file >> n;
+        if (!(file >> n))
+            break;
+
         file.ignore();
-        s.presentIDs.clear();
+
         for (int i = 0; i < n; i++) {
             string id;
             getline(file, id);
             s.presentIDs.push_back(id);
         }
+
         sessions.push_back(s);
     }
+
     file.close();
 }
 
 void saveSessions() {
     ofstream file("sessions.txt");
+
     for (const auto& s : sessions) {
         file << s.name << endl;
         file << s.presentIDs.size() << endl;
+
         for (const auto& id : s.presentIDs) {
             file << id << endl;
         }
     }
+
     file.close();
 }
 
 void createSession() {
     AttendanceSession s;
+
     cout << "Enter Session Name: ";
     getline(cin, s.name);
+
     sessions.push_back(s);
     cout << "Session Created Successfully!\n";
 }
@@ -121,6 +143,7 @@ void viewSessions() {
         cout << "No sessions available.\n";
         return;
     }
+
     cout << "\n--- Lecture Sessions ---\n";
     for (size_t i = 0; i < sessions.size(); i++) {
         cout << i + 1 << ". " << sessions[i].name << endl;
@@ -134,12 +157,15 @@ void markAttendance() {
         cout << "No sessions available.\n";
         return;
     }
+
     viewSessions();
+
     int choice;
     cout << "Select session number: ";
     cin >> choice;
     cin.ignore();
-    if (choice < 1 || choice > sessions.size()) {
+
+    if (choice < 1 || choice > (int)sessions.size()) {
         cout << "Invalid session choice.\n";
         return;
     }
@@ -147,12 +173,13 @@ void markAttendance() {
     string id;
     cout << "Enter Student ID to mark present: ";
     getline(cin, id);
+
     if (!studentExists(id)) {
         cout << "Student not found.\n";
         return;
     }
 
-    // prevent duplicate attendance
+    // Prevent duplicate attendance
     for (const auto& presentID : sessions[choice - 1].presentIDs) {
         if (presentID == id) {
             cout << "Student already marked present.\n";
@@ -169,20 +196,25 @@ void generateReport() {
         cout << "No sessions available.\n";
         return;
     }
+
     viewSessions();
+
     int choice;
     cout << "Select session number: ";
     cin >> choice;
     cin.ignore();
-    if (choice < 1 || choice > sessions.size()) {
+
+    if (choice < 1 || choice > (int)sessions.size()) {
         cout << "Invalid session choice.\n";
         return;
     }
 
     AttendanceSession& session = sessions[choice - 1];
+
     cout << "\n--- Attendance Report ---\n";
     cout << "Session: " << session.name << endl;
     cout << "Total Present: " << session.presentIDs.size() << endl;
+
     for (const auto& id : session.presentIDs) {
         cout << "Student ID: " << id << endl;
     }
@@ -195,6 +227,7 @@ int main() {
     loadSessions();
 
     int choice;
+
     do {
         cout << "\n--- Digital Attendance System (Week 4) ---\n";
         cout << "1. Register Student\n";
@@ -205,6 +238,7 @@ int main() {
         cout << "6. Generate Report\n";
         cout << "7. Save & Exit\n";
         cout << "Choice: ";
+
         cin >> choice;
         cin.ignore();
 
@@ -220,7 +254,8 @@ int main() {
                 saveSessions();
                 cout << "Data Saved. Exiting...\n";
                 break;
-            default: cout << "Invalid choice.\n";
+            default:
+                cout << "Invalid choice.\n";
         }
 
     } while (choice != 7);
