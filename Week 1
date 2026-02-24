@@ -1,37 +1,29 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <string>
 
 using namespace std;
+
+// ================= STRUCT =================
 
 struct Student {
     string id;
     string name;
 };
 
+// ================= GLOBAL VECTOR =================
+
 vector<Student> students;
 
-// Load students from file
-void loadStudents() {
-    ifstream file("students.txt");
-    if (!file) return;
+// ================= FUNCTIONS =================
 
-    Student s;
-    while (getline(file, s.id) && getline(file, s.name)) {
-        students.push_back(s);
-    }
-    file.close();
-}
-
-// Save students to file
-void saveStudents() {
-    ofstream file("students.txt");
+// Check if student ID already exists
+bool studentExists(string id) {
     for (const auto& s : students) {
-        file << s.id << endl;
-        file << s.name << endl;
+        if (s.id == id)
+            return true;
     }
-    file.close();
+    return false;
 }
 
 // Register new student
@@ -42,18 +34,28 @@ void registerStudent() {
     getline(cin, s.id);
 
     if (s.id.empty()) {
-        cout << "Student ID cannot be empty!\n";
+        cout << "Student ID cannot be empty.\n";
+        return;
+    }
+
+    if (studentExists(s.id)) {
+        cout << "Student ID already exists.\n";
         return;
     }
 
     cout << "Enter Student Name: ";
     getline(cin, s.name);
 
+    if (s.name.empty()) {
+        cout << "Student Name cannot be empty.\n";
+        return;
+    }
+
     students.push_back(s);
     cout << "Student Registered Successfully!\n";
 }
 
-// View all students
+// View students
 void viewStudents() {
     if (students.empty()) {
         cout << "No students registered.\n";
@@ -63,45 +65,33 @@ void viewStudents() {
     cout << "\n--- Student List ---\n";
     for (size_t i = 0; i < students.size(); i++) {
         cout << i + 1 << ". ID: " << students[i].id
-             << ", Name: " << students[i].name << endl;
+             << " | Name: " << students[i].name << endl;
     }
 }
 
-// Search for a student
-void searchStudent() {
-    string searchID;
-    cout << "Enter Student ID to search: ";
-    getline(cin, searchID);
-
-    bool found = false;
-    for (const auto& s : students) {
-        if (s.id == searchID) {
-            cout << "Student Found!\n";
-            cout << "ID: " << s.id << "\nName: " << s.name << endl;
-            found = true;
-            break;
-        }
-    }
-
-    if (!found) {
-        cout << "Student not found.\n";
-    }
-}
+// ================= MAIN =================
 
 int main() {
-    loadStudents();
-
     int choice;
 
     do {
-        cout << "\n--- Digital Attendance System ---\n";
+        cout << "\n--- Digital Attendance System (Week 1) ---\n";
         cout << "1. Register Student\n";
         cout << "2. View Students\n";
-        cout << "3. Search Student\n";
-        cout << "4. Save & Exit\n";
+        cout << "3. Exit\n";
         cout << "Choice: ";
+
         cin >> choice;
-        cin.ignore();
+
+        // Input validation
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Invalid input. Please enter a number.\n";
+            continue;
+        }
+
+        cin.ignore(1000, '\n');  // Clear buffer
 
         switch (choice) {
             case 1:
@@ -111,17 +101,13 @@ int main() {
                 viewStudents();
                 break;
             case 3:
-                searchStudent();
-                break;
-            case 4:
-                saveStudents();
-                cout << "Data Saved. Exiting...\n";
+                cout << "Exiting Week 1...\n";
                 break;
             default:
                 cout << "Invalid choice. Try again.\n";
         }
 
-    } while (choice != 4);
+    } while (choice != 3);
 
     return 0;
 }
